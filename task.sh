@@ -1,43 +1,50 @@
 #!/bin/bash
 
-# Удаляем возможные остатки от предыдущих запусков
-rm -rf dir1 dir2 dir3 empty hello.sh list.txt 2>/dev/null
+# 1. Создаём каталог task с вложенными директориями
+mkdir -p task/dir1 task/dir2 task/dir3/dir4
 
-# 1. Создать директории
-mkdir dir1 dir2 dir3
+# 2. Изменяем текущую директорию на task
+cd task
 
-# 2. Создать пустой файл
-touch empty
+# 3. Создаём пустой файл task/dir2/empty
+touch dir2/empty
 
-# 3. Создать hello.sh
+# 4. Создаём файл hello.sh с указанным содержанием
 echo '#!/bin/bash
-echo "Hello, World!"' > hello.sh
+echo "$1, привет!"' > dir2/hello.sh
 
-# 4. Создать list.txt
-ls /home > list.txt
+# 5. Устанавливаем права rwxrw-r--
+chmod 764 dir2/hello.sh
 
-# 5. Работа с dir1
-cp list.txt dir1/
-mv dir1/list.txt dir1/summary.txt
+# 6. Сохраняем список файлов task/dir2 в list.txt
+ls dir2 > dir2/list.txt
 
-# 6. Копирование в dir2
-cp list.txt dir2/
+# 7. Копируем содержимое dir2 в dir3/dir4
+cp -r dir2/* dir3/dir4/
 
-# 7. Работа с dir3/dir4
-mkdir -p dir3/dir4
-cp list.txt dir3/dir4/
+# 8. Записываем список *.txt файлов в summary.txt
+find . -name "*.txt" > dir1/summary.txt
 
-# 8. Вывод hello.sh
-cat hello.sh
+# 9. Дописываем содержимое list.txt
+cat dir2/list.txt >> dir1/summary.txt
 
-# 9. Приветствие
-echo "Всем студентам, привет!"
+# 10. Определяем переменную окружения
+NAME="Всем студентам"
 
-# 10. Поиск list.txt (кроме корневого)
-find . -mindepth 2 -name list.txt | sort
+# 11. Запускаем hello.sh с аргументом
+./dir2/hello.sh "$NAME" >> dir1/summary.txt
 
-# 11. Вывод основных файлов
-echo -e "empty\nhello.sh\nlist.txt"
+# 12. Переименовываем файл
+mv dir1/summary.txt "Практическое задание"
 
-# 12. Повторный вывод list.txt из поддиректорий
-find . -mindepth 2 -name list.txt | sort
+# 13. Выводим содержимое файла
+cat "Практическое задание"
+
+# 14. Ищем и сортируем строки с "dir"
+grep "dir" "Практическое задание" | sort
+
+# 15. Возвращаемся в родительскую директорию
+cd ..
+
+# 16. Удаляем директорию task
+rm -rf task
